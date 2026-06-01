@@ -7,6 +7,8 @@ import webview
 import db
 from api import MasteryAPI
 
+_IS_ANDROID = hasattr(sys, 'getandroidapilevel')
+
 
 def main():
     db.init_db()
@@ -15,19 +17,22 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     html_path = os.path.join(base_dir, 'frontend', 'index.html')
 
-    webview.create_window(
+    window_kwargs = dict(
         title='Mastery',
         url=html_path,
         js_api=api,
-        width=420,
-        height=820,
-        min_size=(360, 600),
         background_color='#0d0117',
     )
-    webview.start(
-        http_server=True,
-        storage_path=os.path.join(base_dir, 'data'),
-    )
+    if not _IS_ANDROID:
+        window_kwargs.update(width=420, height=820, min_size=(360, 600))
+
+    webview.create_window(**window_kwargs)
+
+    start_kwargs = dict(http_server=True)
+    if not _IS_ANDROID:
+        start_kwargs['storage_path'] = os.path.join(base_dir, 'data')
+
+    webview.start(**start_kwargs)
 
 
 if __name__ == '__main__':

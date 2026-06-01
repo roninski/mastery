@@ -1,8 +1,18 @@
 import sqlite3
 import os
+import sys
 import threading
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'mastery.db')
+
+def _get_db_path():
+    if hasattr(sys, 'getandroidapilevel'):
+        data_dir = os.environ.get('ANDROID_PRIVATE', '.')
+    else:
+        data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+    return os.path.join(data_dir, 'mastery.db')
+
+
+DB_PATH = _get_db_path()
 _lock = threading.RLock()
 
 SCHEMA = """
@@ -35,7 +45,9 @@ def get_connection() -> sqlite3.Connection:
 
 
 def init_db():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    db_dir = os.path.dirname(DB_PATH)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
     with _lock:
         conn = get_connection()
         try:

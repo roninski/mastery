@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mastery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/app.css">
 </head>
@@ -32,16 +35,22 @@
             </header>
             <main class="screen-content">
                 <div class="detail-hero">
-                    <div class="detail-emoji" id="detail-emoji"></div>
-                    <div class="detail-level-info">
-                        <span class="detail-level-text" id="detail-level-text"></span>
-                        <span class="detail-tier" id="detail-tier"></span>
+                    <div class="detail-hero-header">
+                        <div class="detail-hero-left">
+                            <div class="detail-emoji" id="detail-emoji"></div>
+                            <div class="detail-level-block">
+                                <span class="detail-level-text" id="detail-level-text"></span>
+                                <span class="detail-tier" id="detail-tier"></span>
+                            </div>
+                        </div>
+                        <div class="detail-hero-right">
+                            <div class="detail-hours" id="detail-hours"></div>
+                            <div class="detail-next-level" id="detail-next-level"></div>
+                        </div>
                     </div>
                     <div class="xp-bar-container">
                         <div class="xp-bar-fill" id="detail-xp-fill" style="width:0%"></div>
                     </div>
-                    <div class="detail-hours" id="detail-hours"></div>
-                    <div class="detail-next-level" id="detail-next-level"></div>
                 </div>
 
                 <div class="timer-section">
@@ -68,12 +77,13 @@
         <!-- ── Stats Screen ───────────────────────────── -->
         <section id="screen-stats" class="screen">
             <header class="screen-header">
-                <h1 class="screen-title">Stats</h1>
+                <h1 class="app-title">Mastery<span class="app-subtitle">/ Stats</span></h1>
             </header>
             <main class="screen-content">
                 <div class="placeholder-content">
                     <div class="placeholder-emoji">📊</div>
-                    <p class="placeholder-text">Stats coming soon</p>
+                    <div class="placeholder-title">Training Metrics</div>
+                    <p class="placeholder-text">Detailed summaries, level charts, and milestone trackers will appear here.</p>
                 </div>
             </main>
         </section>
@@ -81,12 +91,13 @@
         <!-- ── Settings Screen ────────────────────────── -->
         <section id="screen-settings" class="screen">
             <header class="screen-header">
-                <h1 class="screen-title">Settings</h1>
+                <h1 class="app-title">Mastery<span class="app-subtitle">/ Settings</span></h1>
             </header>
             <main class="screen-content">
                 <div class="placeholder-content">
                     <div class="placeholder-emoji">⚙️</div>
-                    <p class="placeholder-text">Settings coming soon</p>
+                    <div class="placeholder-title">Settings & Tools</div>
+                    <p class="placeholder-text">Manage XP thresholds, prestige levels, theme colors, and data imports.</p>
                 </div>
             </main>
         </section>
@@ -99,7 +110,7 @@
             <svg class="timer-ring-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <linearGradient id="ring-grad" x1="0" y1="1" x2="1" y2="0">
-                        <stop offset="0%" stop-color="#9b4dca"/>
+                        <stop offset="0%" stop-color="#9d4ede"/>
                         <stop offset="100%" stop-color="#c77dff"/>
                     </linearGradient>
                 </defs>

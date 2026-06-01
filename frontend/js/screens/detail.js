@@ -105,7 +105,7 @@ function _updateHero(skill) {
     }
 }
 
-const _TIER_THRESHOLDS = [[1,'Novice'],[11,'Amateur'],[26,'Competent'],[51,'Expert'],[86,'Elite'],[100,'Master']];
+const _TIER_THRESHOLDS = [[1,'Novice'],[10,'Amateur'],[25,'Competent'],[50,'Expert'],[85,'Elite'],[100,'Master']];
 function _getTierName(level) {
     let name = 'Novice';
     for (const [t, label] of _TIER_THRESHOLDS) { if (level >= t) name = label; }
@@ -191,28 +191,13 @@ function _buildSessionRow(session) {
 
     div.innerHTML = `
         <div class="session-info">
-            <span class="session-dur">${escapeHtml(dur)}</span>
-            <span class="session-times">${escapeHtml(startTime)} → ${escapeHtml(endTime)}</span>
-            <span class="session-date">${escapeHtml(dateStr)}</span>
+            <span class="session-date-time">${escapeHtml(dateStr)} • ${escapeHtml(startTime)} – ${escapeHtml(endTime)}</span>
             ${session.note ? `<span class="session-note">${escapeHtml(session.note)}</span>` : ''}
         </div>
-        <button class="btn-delete-session" title="Delete session" type="button">×</button>
+        <div class="session-meta">
+            <span class="session-dur">${escapeHtml(dur)}</span>
+        </div>
     `;
-
-    div.querySelector('.btn-delete-session').addEventListener('click', e => {
-        e.stopPropagation();
-        showConfirmModal('Delete this session?', 'Delete', async () => {
-            const updated = await api.delete_session(session.id);
-            if (updated?.error) {
-                alert(updated.error);
-            } else {
-                _currentSkill = updated;
-                _updateHero(updated);
-                await _loadSessions();
-                _refresh();
-            }
-        });
-    });
 
     div.addEventListener('click', () => {
         showSessionDetailModal(

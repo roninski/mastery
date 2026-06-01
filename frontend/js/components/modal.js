@@ -46,8 +46,8 @@ export function showAddSessionModal(onConfirm) {
             <span class="modal-label">End time</span>
             <input type="datetime-local" id="input-session-end" class="modal-input">
             <span class="modal-label">Note (optional)</span>
-            <input type="text" id="input-session-note" class="modal-input"
-                   placeholder="e.g. group class, practice session..." maxlength="200" autocomplete="off">
+            <textarea id="input-session-note" class="modal-input modal-input--textarea"
+                      placeholder="e.g. group class, practice session..." maxlength="200" autocomplete="off"></textarea>
             <div class="modal-actions">
                 <button class="btn-secondary" id="btn-modal-cancel" type="button">Cancel</button>
                 <button class="btn-primary" id="btn-modal-confirm" type="button">Add Session</button>
@@ -125,7 +125,12 @@ export function showSessionDetailModal(session, onDelete, onEdit, onSaveNote) {
         <div class="modal-card">
             <div class="modal-title-row">
                 <h2 class="modal-title">Session</h2>
-                <button class="btn-modal-pencil" id="btn-session-edit" type="button">✏ Edit</button>
+                <button class="btn-modal-pencil" id="btn-session-edit" title="Edit session" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:block;">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                </button>
             </div>
             <div class="session-detail-row">
                 <span class="session-detail-label">Date</span>
@@ -140,9 +145,8 @@ export function showSessionDetailModal(session, onDelete, onEdit, onSaveNote) {
                 <span class="session-detail-value session-detail-dur">${escapeHtml(dur)}</span>
             </div>
             <span class="modal-label">Note</span>
-            <input type="text" id="input-detail-note" class="modal-input"
-                   placeholder="Add a note..." maxlength="200" autocomplete="off"
-                   value="${escapeHtml(session.note || '')}">
+            <textarea id="input-detail-note" class="modal-input modal-input--textarea"
+                      placeholder="Add a note..." maxlength="200" autocomplete="off">${escapeHtml(session.note || '')}</textarea>
             <div class="modal-actions">
                 <button class="btn-danger"    id="btn-session-delete" type="button">Delete</button>
                 <button class="btn-secondary" id="btn-modal-cancel"   type="button">Close</button>
@@ -192,9 +196,8 @@ export function showEditSessionModal(session, onSave) {
                 <span class="duration-sep">m</span>
             </div>
             <span class="modal-label">Note (optional)</span>
-            <input type="text" id="input-edit-note" class="modal-input"
-                   placeholder="e.g. group class, practice session..." maxlength="200" autocomplete="off"
-                   value="${escapeHtml(session.note || '')}">
+            <textarea id="input-edit-note" class="modal-input modal-input--textarea"
+                      placeholder="e.g. group class, practice session..." maxlength="200" autocomplete="off">${escapeHtml(session.note || '')}</textarea>
             <div class="modal-actions">
                 <button class="btn-secondary" id="btn-modal-cancel"  type="button">Cancel</button>
                 <button class="btn-primary"   id="btn-modal-confirm" type="button">Save</button>

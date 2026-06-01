@@ -11,10 +11,10 @@ ANCHORS = [
 
 TIER_NAMES = [
     (1,   "Novice"),
-    (11,  "Amateur"),
-    (26,  "Competent"),
-    (51,  "Expert"),
-    (86,  "Elite"),
+    (10,  "Amateur"),
+    (25,  "Competent"),
+    (50,  "Expert"),
+    (85,  "Elite"),
     (100, "Master"),
 ]
 
