@@ -37,6 +37,8 @@ jobs:
           restore-keys: buildozer-
 
       - name: Build APK
+        env:
+          JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
         run: yes | buildozer android debug 2>&1 | tee build.log; exit ${PIPESTATUS[1]}
 
       - name: Upload build log on failure
