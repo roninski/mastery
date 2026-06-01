@@ -37,7 +37,7 @@ jobs:
           restore-keys: buildozer-
 
       - name: Build APK
-        run: buildozer android debug
+        run: yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
