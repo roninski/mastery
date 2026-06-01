@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mastery</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <div id="app">
+
+        <!-- ── Skills Screen ──────────────────────────── -->
+        <section id="screen-skills" class="screen">
+            <header class="screen-header">
+                <h1 class="app-title">Mastery</h1>
+                <button class="btn-icon" id="btn-add-skill" title="Add skill">＋</button>
+            </header>
+            <main class="screen-content">
+                <div class="skills-grid" id="skills-grid"></div>
+            </main>
+        </section>
+
+        <!-- ── Detail Screen ──────────────────────────── -->
+        <section id="screen-detail" class="screen">
+            <header class="screen-header">
+                <button class="btn-icon btn-back" id="btn-back" title="Back">‹</button>
+                <h2 class="screen-title" id="detail-skill-name"></h2>
+                <div class="header-actions">
+                    <button class="btn-icon" id="btn-skill-options" title="Options">⋯</button>
+                </div>
+            </header>
+            <main class="screen-content">
+                <div class="detail-hero">
+                    <div class="detail-emoji" id="detail-emoji"></div>
+                    <div class="detail-level-info">
+                        <span class="detail-level-text" id="detail-level-text"></span>
+                        <span class="detail-tier" id="detail-tier"></span>
+                    </div>
+                    <div class="xp-bar-container">
+                        <div class="xp-bar-fill" id="detail-xp-fill" style="width:0%"></div>
+                    </div>
+                    <div class="detail-hours" id="detail-hours"></div>
+                    <div class="detail-next-level" id="detail-next-level"></div>
+                </div>
+
+                <div class="timer-section">
+                    <button class="btn-start-session" id="btn-start-session">▶ Start Session</button>
+                    <div class="timer-running hidden" id="timer-running">
+                        <div class="timer-display" id="timer-display">00:00:00</div>
+                        <div class="timer-btn-row">
+                            <button class="btn-timer-action btn-timer-pause" id="btn-pause-session" type="button">⏸</button>
+                            <button class="btn-timer-action btn-timer-stop"  id="btn-stop-session"  type="button">■</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sessions-section">
+                    <div class="section-title-row">
+                        <h3 class="section-title">Sessions</h3>
+                        <button class="btn-icon btn-icon--sm" id="btn-add-session-manual" title="Add session">＋</button>
+                    </div>
+                    <div class="sessions-list" id="sessions-list"></div>
+                </div>
+            </main>
+        </section>
+
+        <!-- ── Stats Screen ───────────────────────────── -->
+        <section id="screen-stats" class="screen">
+            <header class="screen-header">
+                <h1 class="screen-title">Stats</h1>
+            </header>
+            <main class="screen-content">
+                <div class="placeholder-content">
+                    <div class="placeholder-emoji">📊</div>
+                    <p class="placeholder-text">Stats coming soon</p>
+                </div>
+            </main>
+        </section>
+
+        <!-- ── Settings Screen ────────────────────────── -->
+        <section id="screen-settings" class="screen">
+            <header class="screen-header">
+                <h1 class="screen-title">Settings</h1>
+            </header>
+            <main class="screen-content">
+                <div class="placeholder-content">
+                    <div class="placeholder-emoji">⚙️</div>
+                    <p class="placeholder-text">Settings coming soon</p>
+                </div>
+            </main>
+        </section>
+
+    </div>
+
+    <!-- ── Fullscreen Timer Overlay ──────────────────── -->
+    <div id="timer-fullscreen" class="timer-fullscreen hidden">
+        <div class="timer-fs-ring-wrapper">
+            <svg class="timer-ring-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="ring-grad" x1="0" y1="1" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#9b4dca"/>
+                        <stop offset="100%" stop-color="#c77dff"/>
+                    </linearGradient>
+                </defs>
+                <circle class="timer-ring-track" cx="50" cy="50" r="44"/>
+                <circle class="timer-ring-progress" id="timer-ring-fill" cx="50" cy="50" r="44" transform="rotate(-90 50 50)"/>
+            </svg>
+            <div class="timer-fs-content">
+                <div class="timer-fs-emoji" id="timer-fs-emoji"></div>
+                <div class="timer-fs-name" id="timer-fs-name"></div>
+                <div class="timer-fs-clock" id="timer-fs-display">00:00:00</div>
+                <div class="timer-fs-level" id="timer-fs-level"></div>
+                <div class="timer-fs-next" id="timer-fs-next"></div>
+            </div>
+        </div>
+        <div class="timer-fs-btn-row">
+            <button class="btn-timer-action btn-timer-pause" id="btn-pause-fs"  type="button">⏸</button>
+            <button class="btn-timer-action btn-timer-stop"  id="btn-stop-fs"   type="button">■</button>
+        </div>
+    </div>
+
+    <!-- ── Modal Overlay ──────────────────────────────── -->
+    <div id="modal-overlay" class="modal-overlay hidden"></div>
+
+    <!-- ── Bottom Navigation ──────────────────────────── -->
+    <nav id="bottom-nav" class="bottom-nav">
+        <button class="nav-btn" data-screen="skills">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+                </svg>
+            </span>
+            <span class="nav-label">Skills</span>
+        </button>
+        <button class="nav-btn" data-screen="stats">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                </svg>
+            </span>
+            <span class="nav-label">Stats</span>
+        </button>
+        <button class="nav-btn" data-screen="settings">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </span>
+            <span class="nav-label">Settings</span>
+        </button>
+    </nav>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
