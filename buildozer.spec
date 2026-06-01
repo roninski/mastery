@@ -12,6 +12,8 @@ version = 0.1
 
 requirements = python3,jnius,bottle,proxy_tools,typing_extensions,pywebview
 
+p4a.bootstrap = webview
+
 android.permissions = INTERNET
 android.api = 33
 android.minapi = 24
