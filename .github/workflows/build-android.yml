@@ -60,6 +60,12 @@ jobs:
             exit 1
           fi
           DIST_DIR=$(dirname "$GRADLEW")
+
+          # The first buildozer run may have failed before copying the JAR into the
+          # generated Gradle project - ensure it's there before Gradle runs.
+          mkdir -p "$DIST_DIR/src/main/libs"
+          cp libs/pywebview-android.jar "$DIST_DIR/src/main/libs/"
+
           "$GRADLEW" -p "$DIST_DIR" assembleDebug --no-daemon 2>&1 | tee -a build.log
 
           # Copy the APK to bin/ where the upload step expects it.
