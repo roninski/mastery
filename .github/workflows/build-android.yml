@@ -46,9 +46,11 @@ jobs:
 
           # Disable Jetifier in the generated gradle.properties so pywebview-android.jar
           # is included as-is without the transform that breaks it.
+          # p4a writes android.enableJetifier=true - we replace it directly.
           find .buildozer -name "gradle.properties" -path "*/dists/*" | while read f; do
-            grep -q "enableJetifier" "$f" || echo "android.enableJetifier=false" >> "$f"
-            echo "Patched: $f"
+            sed -i 's/android\.enableJetifier=true/android.enableJetifier=false/' "$f"
+            echo "Patched $f:"
+            grep "enableJetifier" "$f"
           done
 
           # Re-run only the Gradle assembly step directly.
@@ -58,7 +60,7 @@ jobs:
             exit 1
           fi
           DIST_DIR=$(dirname "$GRADLEW")
-          "$GRADLEW" -p "$DIST_DIR" assembleDebug 2>&1 | tee -a build.log
+          "$GRADLEW" -p "$DIST_DIR" assembleDebug --no-daemon 2>&1 | tee -a build.log
 
           # Copy the APK to bin/ where the upload step expects it.
           mkdir -p bin
