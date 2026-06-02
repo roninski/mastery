@@ -39,7 +39,30 @@ jobs:
       - name: Build APK
         env:
           JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
-        run: yes | buildozer android debug 2>&1 | tee build.log; exit ${PIPESTATUS[1]}
+        run: |
+          # First pass: let buildozer generate the full Gradle project.
+          # It will fail at the Jetifier transform on pywebview-android.jar - that's expected.
+          yes | buildozer android debug 2>&1 | tee build.log || true
+
+          # Disable Jetifier in the generated gradle.properties so pywebview-android.jar
+          # is included as-is without the transform that breaks it.
+          find .buildozer -name "gradle.properties" -path "*/dists/*" | while read f; do
+            grep -q "enableJetifier" "$f" || echo "android.enableJetifier=false" >> "$f"
+            echo "Patched: $f"
+          done
+
+          # Re-run only the Gradle assembly step directly.
+          GRADLEW=$(find .buildozer -name "gradlew" -path "*/dists/mastery/*" | head -1)
+          if [ -z "$GRADLEW" ]; then
+            echo "ERROR: Gradle project was not generated - check build.log"
+            exit 1
+          fi
+          DIST_DIR=$(dirname "$GRADLEW")
+          "$GRADLEW" -p "$DIST_DIR" assembleDebug 2>&1 | tee -a build.log
+
+          # Copy the APK to bin/ where the upload step expects it.
+          mkdir -p bin
+          find "$DIST_DIR/build/outputs/apk/debug" -name "*.apk" -exec cp {} bin/ \;
 
       - name: Upload build log on failure
         if: failure()
