@@ -40,35 +40,35 @@ jobs:
         env:
           JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
         run: |
-          # First pass: let buildozer generate the full Gradle project.
-          # It will fail at the Jetifier transform on pywebview-android.jar - that's expected.
+          # Pass 1: run buildozer to generate the Gradle project and compile Python.
+          # p4a references libs/pywebview-android.jar in build.gradle via android.add_jars
+          # but does not copy it into the dist before running Gradle, so the internal
+          # Gradle run fails. That failure is caught here; everything else is set up.
           yes | buildozer android debug 2>&1 | tee build.log || true
 
-          # Disable Jetifier in the generated gradle.properties so pywebview-android.jar
-          # is included as-is without the transform that breaks it.
-          # p4a writes android.enableJetifier=true - we replace it directly.
-          find .buildozer -name "gradle.properties" -path "*/dists/*" | while read f; do
-            sed -i 's/android\.enableJetifier=true/android.enableJetifier=false/' "$f"
-            echo "Patched $f:"
-            grep "enableJetifier" "$f"
-          done
-
-          # Re-run only the Gradle assembly step directly.
-          GRADLEW=$(find .buildozer -name "gradlew" -path "*/dists/mastery/*" | head -1)
-          if [ -z "$GRADLEW" ]; then
-            echo "ERROR: Gradle project was not generated - check build.log"
+          # The Gradle project is generated at a path that is fully determined by
+          # package.name and android.archs in buildozer.spec.
+          DIST_DIR=".buildozer/android/platform/build-arm64-v8a/dists/mastery"
+          if [ ! -d "$DIST_DIR" ]; then
+            echo "ERROR: Gradle project not found at $DIST_DIR — first pass failed to generate it"
             exit 1
           fi
-          DIST_DIR=$(dirname "$GRADLEW")
 
-          # The first buildozer run may have failed before copying the JAR into the
-          # generated Gradle project - ensure it's there before Gradle runs.
+          # Place the JAR where build.gradle expects it and disable Jetifier so the
+          # plain JAR is packaged without an AndroidX migration transform.
           mkdir -p "$DIST_DIR/src/main/libs"
           cp libs/pywebview-android.jar "$DIST_DIR/src/main/libs/"
+          if grep -q "android.enableJetifier" "$DIST_DIR/gradle.properties"; then
+            sed -i 's/android\.enableJetifier=true/android.enableJetifier=false/' "$DIST_DIR/gradle.properties"
+          else
+            echo "android.enableJetifier=false" >> "$DIST_DIR/gradle.properties"
+          fi
 
-          "$GRADLEW" -p "$DIST_DIR" assembleDebug --no-daemon 2>&1 | tee -a build.log
+          # Pass 2: assemble the APK now that the project is complete.
+          "$DIST_DIR/gradlew" -p "$DIST_DIR" assembleDebug --no-daemon \
+            2>&1 | tee -a build.log
 
-          # Copy the APK to bin/ where the upload step expects it.
+          # Collect the APK.
           mkdir -p bin
           find "$DIST_DIR/build/outputs/apk/debug" -name "*.apk" -exec cp {} bin/ \;
 
