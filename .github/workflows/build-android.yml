@@ -27,7 +27,7 @@ jobs:
             cmake libffi-dev libssl-dev
 
       - name: Install Buildozer
-        run: pip install buildozer cython
+        run: pip install buildozer cython python-for-android
 
       - name: Cache Buildozer global directory
         uses: actions/cache@v4
