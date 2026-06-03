@@ -36,41 +36,24 @@ jobs:
           key: buildozer-${{ hashFiles('buildozer.spec') }}
           restore-keys: buildozer-
 
+      - name: Pre-create libs directory in python-for-android bootstraps
+        run: |
+          P4A_PATH=$(python -c "import pythonforandroid; print(pythonforandroid.__path__[0])")
+          echo "python-for-android path: $P4A_PATH"
+          mkdir -p "$P4A_PATH/bootstraps/webview/build/src/main/libs"
+          mkdir -p "$P4A_PATH/bootstraps/common/build/src/main/libs"
+          python -c "
+          content = open('buildozer.spec').read()
+          new_content = content.replace('[buildozer]', 'android.p4a_dir = ' + '$P4A_PATH' + '\n\n[buildozer]')
+          open('buildozer.spec', 'w').write(new_content)
+          "
+
       - name: Build APK
         env:
           JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
         run: |
-          # Pass 1: run buildozer to generate the Gradle project and compile Python.
-          # p4a references libs/pywebview-android.jar in build.gradle via android.add_jars
-          # but does not copy it into the dist before running Gradle, so the internal
-          # Gradle run fails. That failure is caught here; everything else is set up.
-          yes | buildozer android debug 2>&1 | tee build.log || true
+          yes | buildozer android debug 2>&1 | tee build.log
 
-          # The Gradle project is generated at a path that is fully determined by
-          # package.name and android.archs in buildozer.spec.
-          DIST_DIR=".buildozer/android/platform/build-arm64-v8a/dists/mastery"
-          if [ ! -d "$DIST_DIR" ]; then
-            echo "ERROR: Gradle project not found at $DIST_DIR — first pass failed to generate it"
-            exit 1
-          fi
-
-          # Place the JAR where build.gradle expects it and disable Jetifier so the
-          # plain JAR is packaged without an AndroidX migration transform.
-          mkdir -p "$DIST_DIR/src/main/libs"
-          cp libs/pywebview-android.jar "$DIST_DIR/src/main/libs/"
-          if grep -q "android.enableJetifier" "$DIST_DIR/gradle.properties"; then
-            sed -i 's/android\.enableJetifier=true/android.enableJetifier=false/' "$DIST_DIR/gradle.properties"
-          else
-            echo "android.enableJetifier=false" >> "$DIST_DIR/gradle.properties"
-          fi
-
-          # Pass 2: assemble the APK now that the project is complete.
-          "$DIST_DIR/gradlew" -p "$DIST_DIR" assembleDebug --no-daemon \
-            2>&1 | tee -a build.log
-
-          # Collect the APK.
-          mkdir -p bin
-          find "$DIST_DIR/build/outputs/apk/debug" -name "*.apk" -exec cp {} bin/ \;
 
       - name: Upload build log on failure
         if: failure()
