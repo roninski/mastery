@@ -27,7 +27,7 @@ jobs:
             cmake libffi-dev libssl-dev
 
       - name: Install Buildozer
-        run: pip install buildozer cython python-for-android
+        run: pip install buildozer cython
 
       - name: Cache Buildozer global directory
         uses: actions/cache@v4
@@ -36,15 +36,16 @@ jobs:
           key: buildozer-${{ hashFiles('buildozer.spec') }}
           restore-keys: buildozer-
 
-      - name: Pre-create libs directory in python-for-android bootstraps
+      - name: Clone and patch python-for-android bootstraps
         run: |
-          P4A_PATH=$(python -c "import pythonforandroid; print(pythonforandroid.__path__[0])")
-          echo "python-for-android path: $P4A_PATH"
-          mkdir -p "$P4A_PATH/bootstraps/webview/build/src/main/libs"
-          mkdir -p "$P4A_PATH/bootstraps/common/build/src/main/libs"
+          git clone --depth 1 https://github.com/kivy/python-for-android.git
+          mkdir -p python-for-android/pythonforandroid/bootstraps/webview/build/src/main/libs
+          mkdir -p python-for-android/pythonforandroid/bootstraps/common/build/src/main/libs
           python -c "
+          import os
           content = open('buildozer.spec').read()
-          new_content = content.replace('[buildozer]', 'android.p4a_dir = ' + '$P4A_PATH' + '\n\n[buildozer]')
+          p4a_dir = os.path.abspath('python-for-android')
+          new_content = content.replace('[buildozer]', 'p4a.source_dir = ' + p4a_dir + '\n\n[buildozer]')
           open('buildozer.spec', 'w').write(new_content)
           "
 
